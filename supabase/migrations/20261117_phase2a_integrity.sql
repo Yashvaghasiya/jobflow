@@ -24,6 +24,7 @@ declare inv invoices;begin
  update invoices set "amountPaid"="amountPaid"+paid_amount,status=case when "amountPaid"+paid_amount=total then 'Paid' else 'Partially Paid' end,"updatedAt"=now() where id=invoice_id;
 end $$;
 
+
 create or replace function public.save_jobflow_invoice(request jsonb,issue boolean default false) returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
 declare uid uuid:=auth.uid(); iid uuid:=coalesce(nullif(request->>'id','')::uuid,gen_random_uuid()); inv public.invoices; prof public.business_profiles; item jsonb; pos integer:=0; sub numeric:=0; c numeric:=0; s numeric:=0; ig numeric:=0; rt numeric:=coalesce((request->>'taxRate')::numeric,18); fy text; yr integer; seq integer; dt date:=(now() at time zone 'Asia/Kolkata')::date;
 begin
@@ -39,11 +40,11 @@ begin
  sub:=sub+round((item->>'qty')::numeric*(item->>'rate')::numeric,2); end loop;
  select * into prof from public.business_profiles where user_id=uid;
  if issue then
- if coalesce(trim(prof."legalName"),'')='' or coalesce(trim(prof.address),'')='' or coalesce(prof."stateCode",'') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or prof."stateCode" in ('25','28') or coalesce(prof.gstin,'') !~ ('^'||prof."stateCode"||'[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$') or coalesce(prof.vpa,'') !~ '^[a-zA-Z0-9._-]{2,256}@[a-zA-Z][a-zA-Z0-9._-]{1,64}$' then raise exception 'Complete business profile in Settings before issuing'; end if;
+ if coalesce(trim(prof."legalName"),'')='' or coalesce(trim(prof.address),'')='' or coalesce(prof."stateCode",'') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or prof."stateCode" in ('25','28') or coalesce(prof.gstin,'') !~ ('^'||prof."stateCode"||'[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$') or coalesce(prof.vpa,'') !~ '^[a-zA-Z0-9._-]{2,255}@[a-zA-Z][a-zA-Z0-9._-]{1,64}$' then raise exception 'Complete business profile in Settings before issuing'; end if;
  if coalesce(trim(request->>'clientName'),'')='' or coalesce(trim(request->>'clientAddress'),'')='' or coalesce(request->>'placeOfSupply','') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or request->>'placeOfSupply' in ('25','28') then raise exception 'Client name, address and valid place of supply required'; end if;
  if coalesce(request->>'clientGstin','')<>'' and request->>'clientGstin' !~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$' then raise exception 'Invalid client GSTIN'; end if;
  yr:=extract(year from dt)::integer-case when extract(month from dt)<4 then 1 else 0 end; fy:=yr::text||'-'||right((yr+1)::text,2);
- insert into public.invoice_sequences values(uid,fy,1) on conflict(user_id,fy) do update set serial=invoice_sequences.serial+1 returning serial into seq;
+ insert into public.invoice_sequences values(uid,fy,1) on conflict on constraint invoice_sequences_pkey do update set serial=invoice_sequences.serial+1 returning serial into seq;
  end if;
  if prof."stateCode"=request->>'placeOfSupply' then c:=round(sub*rt/200,2);s:=c;else ig:=round(sub*rt/100,2);end if;
  insert into public.invoices(id,user_id,"projectId","clientName","clientAddress","clientGstin","placeOfSupply","taxRate",notes,status,"invoiceNumber","financialYear","issuedDate",supplier,subtotal,cgst,sgst,igst,total)
@@ -53,5 +54,6 @@ begin
  for item in select * from jsonb_array_elements(request->'items') loop pos:=pos+1;insert into public.invoice_items(user_id,"invoiceId",position,description,"hsnSac",qty,rate) values(uid,iid,pos,item->>'description',item->>'hsnSac',(item->>'qty')::numeric,(item->>'rate')::numeric);end loop;
  return to_jsonb(inv);
 end $$;
+
 
 commit;
