@@ -1,0 +1,17 @@
+import {describe,it,expect} from 'vitest';
+import {shareOptions,shareState,backupDocument,csvExport,exportFileName,workspaceTables} from './portability';
+const now=Date.parse('2026-11-17T10:00:00Z');
+describe('share controls',()=>{
+it('keeps optional values null and trims labels',()=>{expect(shareOptions()).toEqual({client_name:null,expires_at:null});expect(shareOptions('  Client A  ').client_name).toBe('Client A');});
+it('validates labels',()=>{expect(()=>shareOptions('x'.repeat(121))).toThrow();expect(()=>shareOptions('bad\nlabel')).toThrow();expect(shareOptions('x'.repeat(120)).client_name).toHaveLength(120);});
+it('rejects invalid, past and exact-boundary expiry',()=>{for(const s of ['bad','2026-11-16T10:00:00Z','2026-11-17T10:00:00Z'])expect(()=>shareOptions('',s,now)).toThrow();});
+it('serializes future expiry with timezone',()=>{expect(shareOptions('Client','2026-11-17T16:00:00+05:30',now).expires_at).toBe('2026-11-17T10:30:00.000Z');});
+it('displays expired and revoked independently',()=>{expect(shareState({expires_at:new Date(now).toISOString()},now)).toBe('Expired');expect(shareState({revoked_at:'yes',expires_at:new Date(now+1).toISOString()},now)).toBe('Revoked');expect(shareState({},now)).toBe('Active');});
+});
+describe('portable exports',()=>{
+it('versions complete table structure and excludes other owners',()=>{const tables=Object.fromEntries(workspaceTables.map(t=>{const f=t==='profiles'?'id':t==='worker_proofs'?'owner_id':'user_id';return [t,[{[f]:'owner',id:t==='profiles'?'owner':'one',token_hash:'secret'},{[f]:'other',id:'other'}]];}));const doc=backupDocument(tables,'owner','Studio',new Date(now));expect(doc.formatVersion).toBe(1);expect(doc.exportedAt).toBe('2026-11-17T10:00:00.000Z');expect(Object.keys(doc.tables)).toEqual(workspaceTables);for(const rows of Object.values(doc.tables))expect(rows).toHaveLength(1);expect(doc.tables.client_shares[0]).not.toHaveProperty('token_hash');expect(doc.business).toBe('Studio');expect(()=>backupDocument({},null)).toThrow();});
+it('does not mutate rows and provides empty arrays',()=>{const row={user_id:'o',token_hash:'hash',client_name:'Name'};const doc=backupDocument({client_shares:[row]},'o');expect(row.token_hash).toBe('hash');expect(doc.tables.projects).toEqual([]);expect(JSON.parse(JSON.stringify(doc)).tables.client_shares[0].client_name).toBe('Name');});
+it('exports plain-number money and ISO dates in all CSVs',()=>{const p=csvExport('projects',[{projectValue:'123456.75',clientAmountReceived:100,dueDate:'2026-11-18'}]);expect(p).toContain('123456.75,100');expect(p).toContain('2026-11-18');expect(p).not.toContain('₹');expect(csvExport('invoices',[{total:'1200.50',amountPaid:50}])).toContain('1200.5,50');expect(csvExport('payments',[{amount:'1000.25'}])).toContain('1000.25');});
+it('escapes commas, quotes, newlines and spreadsheet formulas',()=>{const csv=csvExport('payments',[{note:'a,"b"\nc',amount:1},{note:'=1+1',amount:2}]);expect(csv).toContain('"a,""b""\nc"');expect(csv).toContain('"'=1+1"');expect(csv).toContain('\r\n');});
+it('handles empty CSV and deterministic UTC names',()=>{expect(csvExport('payments',[])).toContain('id,invoiceId,amount,note,createdAt');expect(exportFileName('backup',new Date(now))).toBe('jobflow-backup-2026-11-17.json');expect(exportFileName('payments',new Date(now))).toBe('jobflow-payments-2026-11-17.csv');expect(()=>csvExport('payments',[{amount:'oops'}])).toThrow();});
+});
