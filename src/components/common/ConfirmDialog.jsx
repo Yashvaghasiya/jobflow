@@ -1,0 +1,1 @@
+import Modal from './Modal';export default function ConfirmDialog({title='Delete item?',message='This action cannot be undone.',onConfirm,onClose}){return <Modal title={title} onClose={onClose}><p>{message}</p><footer><button onClick={onClose}>Cancel</button><button className="danger-button" onClick={onConfirm}>Delete</button></footer></Modal>;}
