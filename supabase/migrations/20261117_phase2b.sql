@@ -42,7 +42,7 @@ update tasks set status='Completed',"completedDate"=(now() at time zone 'Asia/Ko
 if not exists(select 1 from tasks where user_id=r.owner_id and "projectId"=t."projectId" and status='In Progress') then
 update tasks set status='In Progress' where user_id=r.owner_id and id=(select id from tasks where user_id=r.owner_id and "projectId"=t."projectId" and status='Pending' and "order">t."order" order by "order" limit 1);end if;
 update projects set "invoicePaymentVersion"=coalesce("invoicePaymentVersion",0)+1 where user_id=r.owner_id and id=t."projectId";
-perform set_config('jobflow.completing','no',true);end$;
+perform set_config('jobflow.completing','no',true);end$$;
 create table public.worker_proofs(id uuid primary key default gen_random_uuid(),worker_id uuid not null references auth.users on delete cascade,owner_id uuid not null references auth.users on delete cascade,task_id text not null,path text not null unique,created_at timestamptz default now());
 alter table public.worker_proofs enable row level security;revoke all on public.worker_proofs from anon,authenticated;
 create policy proof_read on public.worker_proofs for select to authenticated using(worker_id=auth.uid() or owner_id=auth.uid());grant select on public.worker_proofs to authenticated;
