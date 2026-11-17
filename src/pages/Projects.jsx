@@ -1,0 +1,1 @@
+import ProjectTable from '../components/projects/ProjectTable';export default function Projects(){return <><div className="page-heading"><div><h2>Project workspace</h2><p>From first enquiry to final handover.</p></div></div><ProjectTable/></>;}
