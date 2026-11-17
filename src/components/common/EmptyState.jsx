@@ -1,0 +1,1 @@
+import {FolderOpen} from 'lucide-react';export default function EmptyState({title='Nothing here yet',description='Add an item to get started.',action}){return <div className="empty"><FolderOpen size={30}/><h3>{title}</h3><p>{description}</p>{action}</div>;}
