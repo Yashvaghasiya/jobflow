@@ -4,8 +4,8 @@ import {supabase} from './utils/supabaseClient';
 import {keys,connectCache,disconnectCache,snapshot,localImport} from './utils/storage';
 const CloudContext=createContext(null);
 export const useCloud=()=>useContext(CloudContext);
-const clean=row=>Object.fromEntries(Object.entries(row).filter(([k,v])=>!['user_id','created_at','updated_at'].includes(k)&&v!==null));
-async function readCloud(){return Object.fromEntries(await Promise.all(keys.map(async k=>{const {data,error}=await supabase.from(k).select('*');if(error)throw error;return [k,data.map(clean)];})));}
+const clean=row=>Object.fromEntries(Object.entries(row).filter(([k,v])=>k!=='user_id'&&v!==null));
+async function readCloud(){return Object.fromEntries(await Promise.all(keys.map(async k=>{let rows=[];for(let from=0;;from+=1000){const {data,error}=await supabase.from(k).select('*').order('id').range(from,from+999);if(error)throw error;rows.push(...data);if(data.length<1000)break;}return [k,rows.map(clean)];})));}
 async function writeCloud(data){const {error}=await supabase.rpc('save_jobflow_workspace',{workspace:data});if(error)throw error;}
 export default function CloudApp(){
  const [session,S]=useState(undefined),[loaded,L]=useState(false),[error,E]=useState(''),[status,U]=useState('Loading cloud workspace…'),[email,M]=useState(''),[token,K]=useState(''),[sent,T]=useState(false),[busy,B]=useState(false);
