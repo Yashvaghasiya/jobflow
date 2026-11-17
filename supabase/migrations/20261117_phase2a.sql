@@ -30,7 +30,7 @@ begin
  if coalesce(trim(request->>'clientName'),'')='' or coalesce(trim(request->>'clientAddress'),'')='' or coalesce(request->>'placeOfSupply','') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or request->>'placeOfSupply' in ('25','28') then raise exception 'Client name, address and valid place of supply required'; end if;
  if coalesce(request->>'clientGstin','')<>'' and request->>'clientGstin' !~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$' then raise exception 'Invalid client GSTIN'; end if;
  yr:=extract(year from dt)::integer-case when extract(month from dt)<4 then 1 else 0 end; fy:=yr::text||'-'||right((yr+1)::text,2);
- insert into public.invoice_sequences values(uid,fy,1) on conflict(user_id,fy) do update set serial=invoice_sequences.serial+1 returning serial into seq;
+ insert into public.invoice_sequences values(uid,fy,1) on conflict on constraint invoice_sequences_pkey do update set serial=invoice_sequences.serial+1 returning serial into seq;
  end if;
  if prof."stateCode"=request->>'placeOfSupply' then c:=round(sub*rt/200,2);s:=c;else ig:=round(sub*rt/100,2);end if;
  insert into public.invoices(id,user_id,"projectId","clientName","clientAddress","clientGstin","placeOfSupply","taxRate",notes,status,"invoiceNumber","financialYear","issuedDate",supplier,subtotal,cgst,sgst,igst,total)
