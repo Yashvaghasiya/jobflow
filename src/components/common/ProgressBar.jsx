@@ -1,0 +1,1 @@
+export default function ProgressBar({value=0}){return <div className="progress" role="progressbar" aria-label="Task completion" aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}><span style={{width:value+'%'}}/></div>;}
