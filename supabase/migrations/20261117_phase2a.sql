@@ -26,7 +26,7 @@ begin
  sub:=sub+round((item->>'qty')::numeric*(item->>'rate')::numeric,2); end loop;
  select * into prof from public.business_profiles where user_id=uid;
  if issue then
- if coalesce(trim(prof."legalName"),'')='' or coalesce(trim(prof.address),'')='' or coalesce(prof."stateCode",'') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or prof."stateCode" in ('25','28') or coalesce(prof.gstin,'') !~ ('^'||prof."stateCode"||'[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$') or coalesce(prof.vpa,'') !~ '^[a-zA-Z0-9._-]{2,256}@[a-zA-Z][a-zA-Z0-9._-]{1,64}$' then raise exception 'Complete business profile in Settings before issuing'; end if;
+ if coalesce(trim(prof."legalName"),'')='' or coalesce(trim(prof.address),'')='' or coalesce(prof."stateCode",'') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or prof."stateCode" in ('25','28') or coalesce(prof.gstin,'') !~ ('^'||prof."stateCode"||'[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$') or coalesce(prof.vpa,'') !~ '^[a-zA-Z0-9._-]{2,255}@[a-zA-Z][a-zA-Z0-9._-]{1,64}$' then raise exception 'Complete business profile in Settings before issuing'; end if;
  if coalesce(trim(request->>'clientName'),'')='' or coalesce(trim(request->>'clientAddress'),'')='' or coalesce(request->>'placeOfSupply','') !~ '^(0[1-9]|[12][0-9]|3[0-8])$' or request->>'placeOfSupply' in ('25','28') then raise exception 'Client name, address and valid place of supply required'; end if;
  if coalesce(request->>'clientGstin','')<>'' and request->>'clientGstin' !~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$' then raise exception 'Invalid client GSTIN'; end if;
  yr:=extract(year from dt)::integer-case when extract(month from dt)<4 then 1 else 0 end; fy:=yr::text||'-'||right((yr+1)::text,2);
