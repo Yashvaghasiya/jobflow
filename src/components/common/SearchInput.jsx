@@ -1,0 +1,1 @@
+import {Search} from 'lucide-react';export default function SearchInput({value,onChange,placeholder='Search…',...rest}){return <label className="search"><Search size={17}/><input aria-label={placeholder} placeholder={placeholder} value={value} onChange={e=>onChange(e.target.value)} {...rest}/></label>;}
