@@ -1,0 +1,77 @@
+// Material 3 HCT palette, source #2458cf (hue 272.34, chroma 63.1).
+export const primaryTones=Object.freeze({
+  "0": "#000000",
+  "10": "#00174b",
+  "20": "#002a78",
+  "30": "#003ea8",
+  "40": "#2055cd",
+  "50": "#4270e7",
+  "60": "#618bff",
+  "70": "#8ca8ff",
+  "80": "#b4c5ff",
+  "90": "#dbe1ff",
+  "95": "#eef0ff",
+  "99": "#fefbff",
+  "100": "#ffffff"
+});
+export const light=Object.freeze({
+  "primary": "#2055cd",
+  "onPrimary": "#ffffff",
+  "primaryContainer": "#dbe1ff",
+  "onPrimaryContainer": "#00174b",
+  "secondary": "#585e72",
+  "onSecondary": "#ffffff",
+  "secondaryContainer": "#dde1f9",
+  "onSecondaryContainer": "#151b2d",
+  "tertiary": "#745471",
+  "surface": "#fefbff",
+  "onSurface": "#1a1b21",
+  "surfaceVariant": "#e2e2ec",
+  "onSurfaceVariant": "#45464f",
+  "outline": "#757680",
+  "outlineVariant": "#c5c6d0",
+  "background": "#fefbff",
+  "error": "#ba191a",
+  "success": "#286240",
+  "successContainer": "#e8f4ed",
+  "warning": "#805309",
+  "warningContainer": "#fff3d9",
+  "errorContainer": "#fcebf0",
+  "onError": "#ffffff",
+  "info": "#2055cd",
+  "infoContainer": "#dbe1ff",
+  "surfaceTint": "#eef0ff"
+});
+export const dark=Object.freeze({
+  "primary": "#b4c5ff",
+  "onPrimary": "#002a78",
+  "primaryContainer": "#003ea8",
+  "onPrimaryContainer": "#dbe1ff",
+  "secondary": "#c1c5dd",
+  "onSecondary": "#2a3042",
+  "secondaryContainer": "#414659",
+  "onSecondaryContainer": "#dde1f9",
+  "tertiary": "#e2bbdb",
+  "surface": "#1a1b21",
+  "onSurface": "#e3e2e9",
+  "surfaceVariant": "#45464f",
+  "onSurfaceVariant": "#c5c6d0",
+  "outline": "#8f909a",
+  "outlineVariant": "#45464f",
+  "background": "#1a1b21",
+  "error": "#ffb4ab",
+  "success": "#9cd5ad",
+  "successContainer": "#123823",
+  "warning": "#f1c16e",
+  "warningContainer": "#49330b",
+  "errorContainer": "#570f17",
+  "onError": "#690005",
+  "info": "#b4c5ff",
+  "infoContainer": "#003ea8",
+  "surfaceTint": "#222735"
+});
+export const schemes=Object.freeze({light,dark});
+export const THEME_KEY='jobflow.theme';
+export function readPreference(storage){try{const v=storage?.getItem(THEME_KEY);return ['light','dark'].includes(v)?v:'system';}catch{return 'system';}}
+export function resolveMode(preference,systemDark){return preference==='light'||preference==='dark'?preference:systemDark?'dark':'light';}
+export function persistPreference(storage,value){if(!['system','light','dark'].includes(value))return;try{if(value==='system')storage?.removeItem(THEME_KEY);else storage?.setItem(THEME_KEY,value);}catch{/* Private browsing may disable storage. */}}
