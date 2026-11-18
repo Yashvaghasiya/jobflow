@@ -1,3 +1,4 @@
+import BusinessProvider from './BusinessOnboarding';
 import {JButton,JInput} from './ui';
 import {createContext,useContext,useEffect,useRef,useState} from 'react';
 import App from './App';
@@ -24,5 +25,5 @@ export default function CloudApp(){
  if(session===undefined)return <main className="panel auth-card" aria-busy="true">Connecting to JOBFLOW…</main>;
  if(!session)return <main className="panel auth-card"><p className="eyebrow">JOBFLOW</p><h1>Welcome back</h1><p>One focused workspace for your business. Sign in securely by email.</p><form onSubmit={authenticate}><label>Email address<JInput type="email" required autoComplete="email" value={email} disabled={sent||busy} onChange={e=>M(e.target.value)}/></label>{sent&&<><p>Check your email for a sign-in link or enter its verification code below.</p><label>Verification code<JInput required autoComplete="one-time-code" inputMode="numeric" value={token} onChange={e=>K(e.target.value)}/></label></>}<JButton className="primary" disabled={busy||!supabase}>{busy?'Please wait…':sent?'Verify code':'Send sign-in link'}</JButton>{sent&&<JButton type="button" onClick={()=>{T(false);K('');}}>Use another email</JButton>}</form>{!supabase&&<p role="alert">Cloud configuration is missing.</p>}{error&&<p role="alert" className="error">{error}</p>}</main>;
  if(!loaded)return <main className="panel auth-card"><h1>Opening workspace</h1><p>{status}</p>{error&&<><p role="alert">{error}</p><JButton onClick={()=>window.location.reload()}>Retry</JButton><JButton onClick={signOut}>Sign out</JButton></>}</main>;
- return <CloudContext.Provider value={{signOut,importLocal,busy,flush:()=>flushRef.current()}}><div role="status" className="sync-status">{status}{error&&<> · <span role="alert">{error}</span> <JButton onClick={()=>flushRef.current().catch(()=>{})}>Retry sync</JButton></>}</div><App key={uid}/></CloudContext.Provider>;
+ return <CloudContext.Provider value={{signOut,importLocal,busy,flush:()=>flushRef.current()}}><div role="status" className="sync-status">{status}{error&&<> · <span role="alert">{error}</span> <JButton onClick={()=>flushRef.current().catch(()=>{})}>Retry sync</JButton></>}</div><BusinessProvider key={uid} uid={uid}><App key={uid}/></BusinessProvider></CloudContext.Provider>;
 }
