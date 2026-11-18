@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import {Activity,FileText,LayoutDashboard,BriefcaseBusiness,ShoppingCart,Users,Bell,History,WalletCards,BarChart3,Settings,Layers,ChevronDown} from 'lucide-react';
-export const navigation=[['Dashboard',LayoutDashboard],['Projects',BriefcaseBusiness],['Invoices',FileText],['Purchases',ShoppingCart],['People',Users],['Reminders',Bell],['Automations',Activity],['History',History],['Payments',WalletCards],['Reports',BarChart3],['Settings',Settings]];
-export const navGroups=[['Kaam',['Dashboard','Projects','People']],['Money',['Invoices','Payments','Purchases']],['Organize',['Reminders','History','Reports','Automations']]];
+import {CalendarDays,Activity,FileText,LayoutDashboard,BriefcaseBusiness,ShoppingCart,Users,Bell,History,WalletCards,BarChart3,Settings,Layers,ChevronDown} from 'lucide-react';
+export const navigation=[['Dashboard',LayoutDashboard],['Projects',BriefcaseBusiness],['Calendar',CalendarDays],['Invoices',FileText],['Purchases',ShoppingCart],['People',Users],['Reminders',Bell],['Automations',Activity],['History',History],['Payments',WalletCards],['Reports',BarChart3],['Settings',Settings]];
+export const navGroups=[['Kaam',['Dashboard','Projects','Calendar','People']],['Money',['Invoices','Payments','Purchases']],['Organize',['Reminders','History','Reports','Automations']]];
 export default function Sidebar({page,navigate,open,onClose}){
  const [collapsed,C]=useState({});
  const link=name=>{const Icon=navigation.find(([n])=>n===name)[1];return <a key={name} href={'#/'+name.toLowerCase()} aria-current={page===name?'page':undefined} onClick={()=>{navigate(name);onClose();}} className={page===name?'active':''}><Icon size={18}/>{name}</a>;};
