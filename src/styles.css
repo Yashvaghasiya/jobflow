@@ -52,3 +52,5 @@ tbody tr:focus-within{background:#f0f5ff}
 /* Audit: protect financial tokens while allowing descriptive cells to wrap. */
 .MuiTableCell-head,.MuiTableCell-root.money{white-space:nowrap;overflow-wrap:normal}.MuiTable-root{min-width:720px}.table-wrap{overflow-x:auto}.MuiTable-root td:has(.badge){white-space:nowrap}
 @media print{.MuiTable-root{min-width:0}}
+
+.MuiTable-root td:nth-child(n+4){white-space:nowrap;overflow-wrap:normal}
