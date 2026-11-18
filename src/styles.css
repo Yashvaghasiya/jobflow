@@ -41,3 +41,7 @@ tbody tr:focus-within{background:#f0f5ff}
 /* MUI owns control surfaces; these rules only arrange control roots. */
 @media(min-width:761px){.MuiButton-root.mobile-only{display:none}.filters>.MuiInputBase-root{width:auto;flex:1 1 140px}.filters>.MuiInputBase-root:has(input[type=search]){flex:2 1 220px}}
 @media(max-width:760px){.app-main{margin-left:0}.filters>.MuiInputBase-root{min-width:0;max-width:100%}}
+
+/* Audit: let long table labels wrap, keep card buttons as cards. */
+.MuiButton-root.mini-reminder{display:block;text-align:left;min-width:0;overflow-wrap:anywhere}.MuiButton-root.mini-reminder>*{display:block}.MuiTable-root{white-space:normal}.MuiTableCell-root{overflow-wrap:anywhere}.MuiTableCell-root .money{white-space:nowrap}.invoice-items{table-layout:fixed;white-space:normal}.invoice-items td:first-child{min-width:0;width:40%}.invoice-items td:nth-child(2){min-width:0}.invoice-items td,.invoice-items th{overflow-wrap:anywhere;white-space:normal}.access-shell progress{accent-color:#2458cf;border-radius:8px;overflow:hidden}.access-shell progress::-webkit-progress-bar{background:#e7eefb}.access-shell progress::-webkit-progress-value{background:#2458cf}
+@media print{.invoice-items{table-layout:fixed;width:100%;min-width:0}.invoice-items th,.invoice-items td{min-width:0!important;white-space:normal!important;font-size:10px!important;padding:8px 4px!important}.invoice-paper .table-wrap{overflow:visible!important}.invoice-items td:first-child{width:40%}}
