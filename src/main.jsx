@@ -1,7 +1,8 @@
+import {UIProvider} from './ui';
 import '@fontsource/geist/400.css';
 import '@fontsource/geist/500.css';
 import '@fontsource/geist/600.css';
-import {OfflineGuard} from './Phase3';import AccessGate from './Access';import React from 'react';import {createRoot} from 'react-dom/client';import CloudApp from './CloudApp';import './styles.css';createRoot(document.getElementById('root')).render(<React.StrictMode><OfflineGuard><AccessGate><CloudApp/></AccessGate></OfflineGuard></React.StrictMode>);
+import {OfflineGuard} from './Phase3';import AccessGate from './Access';import React from 'react';import {createRoot} from 'react-dom/client';import CloudApp from './CloudApp';import './styles.css';createRoot(document.getElementById('root')).render(<React.StrictMode><UIProvider><OfflineGuard><AccessGate><CloudApp/></AccessGate></OfflineGuard></UIProvider></React.StrictMode>);
 // Presentation-only, once-per-element reveals; no workspace state or routing changes.
 if(typeof window!=='undefined'&&typeof IntersectionObserver!=='undefined'){
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
