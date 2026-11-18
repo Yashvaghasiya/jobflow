@@ -48,3 +48,7 @@ tbody tr:focus-within{background:#f0f5ff}
 
 /* Audit round two: keep long project headings separate from actions. */
 .page-heading{flex-wrap:wrap}.page-heading>div:first-child{min-width:0;flex:1 1 28rem}.page-heading>.MuiButton-root{flex-shrink:0;white-space:nowrap}.title-line{flex-wrap:wrap}.title-line h2{overflow-wrap:anywhere}.current-task{flex-wrap:wrap}.current-task>div:first-child{min-width:0;flex:1 1 24rem}
+
+/* Audit: protect financial tokens while allowing descriptive cells to wrap. */
+.MuiTableCell-head,.MuiTableCell-root.money{white-space:nowrap;overflow-wrap:normal}.MuiTable-root{min-width:720px}.table-wrap{overflow-x:auto}.MuiTable-root td:has(.badge){white-space:nowrap}
+@media print{.MuiTable-root{min-width:0}}
