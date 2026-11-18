@@ -40,7 +40,11 @@ export const light=Object.freeze({
   "onError": "#ffffff",
   "info": "#2055cd",
   "infoContainer": "#dbe1ff",
-  "surfaceTint": "#eef0ff"
+  "surfaceTint": "#eef0ff",
+  "primaryHover": "#003ea8",
+  "hover": "#4270e714",
+  "shadow": "#00174b14",
+  "scrim": "#00174b66"
 });
 export const dark=Object.freeze({
   "primary": "#b4c5ff",
@@ -68,7 +72,11 @@ export const dark=Object.freeze({
   "onError": "#690005",
   "info": "#b4c5ff",
   "infoContainer": "#003ea8",
-  "surfaceTint": "#222735"
+  "surfaceTint": "#222735",
+  "primaryHover": "#dbe1ff",
+  "hover": "#b4c5ff14",
+  "shadow": "#00000040",
+  "scrim": "#00000099"
 });
 export const schemes=Object.freeze({light,dark});
 export const THEME_KEY='jobflow.theme';
