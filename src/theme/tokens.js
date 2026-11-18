@@ -83,3 +83,5 @@ export const THEME_KEY='jobflow.theme';
 export function readPreference(storage){try{const v=storage?.getItem(THEME_KEY);return ['light','dark'].includes(v)?v:'system';}catch{return 'system';}}
 export function resolveMode(preference,systemDark){return preference==='light'||preference==='dark'?preference:systemDark?'dark':'light';}
 export function persistPreference(storage,value){if(!['system','light','dark'].includes(value))return;try{if(value==='system')storage?.removeItem(THEME_KEY);else storage?.setItem(THEME_KEY,value);}catch{/* Private browsing may disable storage. */}}
+// Print/export deliberately ignores the active screen scheme.
+export const printColors=Object.freeze({ink:[19,38,52],muted:[100,116,128],paper:[255,255,255],outline:[225,231,236],alternate:[247,249,250]});
