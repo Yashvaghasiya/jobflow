@@ -1,3 +1,0 @@
--- Phase 7: additive columns only. Existing RLS policies remain unchanged.
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS business_type text;
-ALTER TABLE public.purchases ADD COLUMN IF NOT EXISTS category text;
