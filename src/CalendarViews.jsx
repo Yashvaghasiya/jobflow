@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Box,Button,Chip,Dialog,DialogTitle,DialogContent,DialogActions,Typography} from '@mui/material';
 export const VIEW_KEY='jobflow.calendar.view';
 const views=['day','week','month','year'];
-export function readView(){try{const v=localStorage.getItem(VIEW_KEY);return views.includes(v)?v:'week';}catch{return 'week';}}
+export function readView(){try{const v=localStorage.getItem(VIEW_KEY);return views.includes(v)?v:'month';}catch{return 'month';}}
 export function saveView(v){try{if(views.includes(v))localStorage.setItem(VIEW_KEY,v);}catch{}}
 const dateOf=s=>new Date(s+'T12:00:00');
 export const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
