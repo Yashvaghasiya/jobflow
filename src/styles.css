@@ -54,3 +54,21 @@ tbody tr:focus-within{background:#f0f5ff}
 .MuiTable-root td:nth-child(n+4){white-space:nowrap;overflow-wrap:normal}
 /* Numeric cells must outrank MUI default cell alignment. */
 .MuiTableCell-root.money{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* Owner reduction pass: quiet summaries and progressive disclosure. */
+.app-main .page-container{padding-top:32px;padding-bottom:56px}
+.app-main .page-heading{margin-bottom:28px}
+.app-main .three-columns{gap:0;margin-bottom:28px;background:#fff;border-radius:16px;padding:8px}
+.app-main .three-columns>.metric{border:0;box-shadow:none;background:transparent}
+.app-main .owner-financial-strip{gap:0;border-block:1px solid #e8edf5;margin-bottom:28px}
+.app-main .owner-financial-strip>.metric{border:0;box-shadow:none;background:transparent;padding:18px}
+.app-main .owner-overflow{position:relative;align-self:center}
+.app-main .owner-overflow>summary{list-style:none;cursor:pointer;padding:10px 16px;border-radius:8px;background:#f3f6fb;color:#172b4d;letter-spacing:2px}
+.app-main .owner-overflow>summary::-webkit-details-marker{display:none}
+.app-main .owner-overflow>div{position:absolute;right:0;z-index:5;min-width:210px;background:#fff;border:1px solid #edf0f5;border-radius:12px;padding:8px;box-shadow:0 12px 32px #172b4d14;display:grid;gap:4px}
+.app-main .owner-overflow a{padding:10px 12px;font-size:14px;color:#2458cf;text-decoration:none}
+.app-main .owner-resources{margin-block:28px;padding:20px}
+.app-main .owner-resources>summary{font-weight:500;color:#5b6b83;cursor:pointer;padding:4px}
+.app-main .priority-home .panel{box-shadow:0 3px 16px #172b4d04}
+.app-main .priority-home .MuiChip-root{max-width:100%}
+.app-main .priority-home .MuiChip-label{overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){.app-main .page-container{padding:24px 16px 40px}.app-main .owner-financial-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.app-main .owner-overflow>div{max-width:calc(100vw - 48px)}.app-main .priority-home li>.MuiChip-root{max-width:calc(100% - 96px);margin-left:40px}.app-main .priority-home h2{font-size:22px}}
