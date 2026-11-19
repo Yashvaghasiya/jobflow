@@ -86,3 +86,11 @@ button:hover,a.active{background-color:var(--jf-hover)}
 button.primary:hover,.primary:hover{background:var(--jf-primaryHover)}
 .badge,.invoice-badge{background:var(--jf-primaryContainer);color:var(--jf-onPrimaryContainer)}
 @media print{:root{color-scheme:light!important}body{background:var(--jf-surface)!important;color:var(--jf-onSurface)!important}.app-header,.sidebar,.sync-status{display:none!important}}
+
+/* Screen-only tonal elevation also covers worker/client portal panels. */
+@media screen{
+.sidebar,.app-header{background:var(--jf-surfaceContainerLow)}
+.panel{background:var(--jf-surfaceContainer)}
+.app-main .three-columns{background:var(--jf-surfaceContainerLow)}
+.app-main .owner-overflow>div{background:var(--jf-surfaceContainerHigh);color:var(--jf-onSurface)}
+}
