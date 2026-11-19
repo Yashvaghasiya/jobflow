@@ -30,7 +30,7 @@ function isOpaqueBlack(value){
 describe('non-black semantic surfaces and tonal elevation',()=>{
  for(const [mode,c] of Object.entries({light,dark})){
   it(mode+' has no opaque black background or container semantic tokens',()=>{
-   const surfaces=Object.entries(c).filter(([name])=>/^(?:surface|background)|Container$|^(?:primary|secondary|tertiary|error|success|warning|info|hover|scrim)$/.test(name)&&!name.startsWith('on'));
+   const surfaces=Object.entries(c).filter(([name])=>/^(?:surface|background)|Container$|Hover$|^(?:primary|secondary|tertiary|error|success|warning|info|hover|scrim)$/.test(name)&&!name.startsWith('on'));
    expect(surfaces.length).toBeGreaterThan(10);
    for(const [name,value] of surfaces){expect(isOpaqueBlack(value),name+' must not be an opaque black surface').toBe(false);}
    for(const value of Object.values(makeTheme(mode).palette.background))expect(isOpaqueBlack(value)).toBe(false);
