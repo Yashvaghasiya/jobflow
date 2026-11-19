@@ -21,3 +21,41 @@ it('handles invalid and inaccessible storage',()=>{localStorage.setItem(THEME_KE
 it('applies first-visit system preference and toggles persistently across remount',()=>{vi.stubGlobal('matchMedia',()=>({matches:true,addEventListener:vi.fn(),removeEventListener:vi.fn()}));let r=render(<UIProvider><ThemeToggle/><ThemeSettings/></UIProvider>);expect(document.documentElement.dataset.theme).toBe('dark');fireEvent.click(screen.getByRole('button',{name:'Switch to light theme'}));expect(localStorage.getItem(THEME_KEY)).toBe('light');r.unmount();r=render(<UIProvider><ThemeToggle/><ThemeSettings/></UIProvider>);expect(document.documentElement.dataset.theme).toBe('light');fireEvent.change(screen.getByLabelText('Color theme'),{target:{value:'system'}});expect(document.documentElement.dataset.theme).toBe('dark');expect(localStorage.getItem(THEME_KEY)).toBeNull();r.unmount();});
 it('tracks system changes only while following system',()=>{let change;vi.stubGlobal('matchMedia',()=>({matches:false,addEventListener:(n,fn)=>{change=fn;},removeEventListener:vi.fn()}));const r=render(<UIProvider><ThemeSettings/></UIProvider>);fireEvent.change(screen.getByLabelText('Color theme'),{target:{value:'dark'}});expect(document.documentElement.dataset.theme).toBe('dark');fireEvent.change(screen.getByLabelText('Color theme'),{target:{value:'system'}});expect(document.documentElement.dataset.theme).toBe('light');r.unmount();});
 });
+
+// Opaque black is permitted in tonal data/foregrounds, never in screen surfaces.
+function isOpaqueBlack(value){
+ const v=value.toLowerCase().replace(/\s+/g,'');
+ return /^(?:black|#000|#000000|#000f|#000000ff|rgb\(0,0,0\)|rgba\(0,0,0,1(?:\.0+)?\)|rgb\(000(?:\/1)?\))$/.test(v);
+}
+describe('non-black semantic surfaces and tonal elevation',()=>{
+ for(const [mode,c] of Object.entries({light,dark})){
+  it(mode+' has no opaque black background or container semantic tokens',()=>{
+   const surfaces=Object.entries(c).filter(([name])=>/^(?:surface|background)|Container$|^(?:primary|secondary|tertiary|error|success|warning|info|hover|scrim)$/.test(name)&&!name.startsWith('on'));
+   expect(surfaces.length).toBeGreaterThan(10);
+   for(const [name,value] of surfaces){expect(isOpaqueBlack(value),name+' must not be an opaque black surface').toBe(false);}
+   for(const value of Object.values(makeTheme(mode).palette.background))expect(isOpaqueBlack(value)).toBe(false);
+  });
+  it(mode+' maps all 25 Paper elevations to explicit surface tones without MUI overlays',()=>{
+   const t=makeTheme(mode),paper=t.components.MuiPaper.styleOverrides.root;
+   for(let elevation=0;elevation<=24;elevation++){
+    const expected=elevation===0?c.surface:elevation===1?c.surfaceContainerLow:elevation<=3?c.surfaceContainer:elevation<=7?c.surfaceContainerHigh:c.surfaceContainerHighest;
+    expect(paper({ownerState:{elevation}})).toMatchObject({backgroundColor:expected,backgroundImage:'none'});
+   }
+   expect(paper({ownerState:{variant:'outlined',elevation:12}}).backgroundColor).toBe(c.surface);
+  });
+  it(mode+' maps dialogs, menus, popovers, snackbars and chrome to the ramp',()=>{
+   const {components}=makeTheme(mode);
+   for(const name of ['MuiDialog','MuiMenu','MuiPopover'])expect(components[name].styleOverrides.paper).toMatchObject({backgroundColor:c.surfaceContainerHigh,backgroundImage:'none',color:c.onSurface});
+   expect(components.MuiSnackbarContent.styleOverrides.root).toMatchObject({backgroundColor:c.surfaceContainerHighest,color:c.onSurface});
+   expect(components.MuiDrawer.styleOverrides.paper.backgroundColor).toBe(c.surfaceContainerLow);
+   expect(components.MuiAppBar.styleOverrides.root.backgroundColor).toBe(c.surfaceContainerLow);
+  });
+ }
+ const ramp=['surface','surfaceContainerLow','surfaceContainer','surfaceContainerHigh','surfaceContainerHighest'];
+ for(const key of ramp)it('dark onSurface maintains AA against '+key,()=>expect(contrast(dark.onSurface,dark[key])).toBeGreaterThanOrEqual(4.5));
+ it('dark elevation becomes progressively lighter',()=>{for(let i=1;i<ramp.length;i++)expect(luminance(dark[ramp[i]])).toBeGreaterThan(luminance(dark[ramp[i-1]]));});
+ it('detects all supported opaque black notations without rejecting scrims',()=>{
+  for(const color of ['black','#000','#000000','rgb(0, 0, 0)','rgba(0,0,0,1)','#000f','#000000ff'])expect(isOpaqueBlack(color)).toBe(true);
+  for(const color of ['#00000099','rgba(0,0,0,0.5)','#1a1b21'])expect(isOpaqueBlack(color)).toBe(false);
+ });
+});
